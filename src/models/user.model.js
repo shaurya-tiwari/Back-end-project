@@ -2,8 +2,8 @@ import mongoose, { Schema } from "mongoose";
 // installinng bcrypt - it hash our passwords ,decrypt encrypted passwords
 // installing JWTwebtokens -securly transfer data over the web (between two parties).
 // jwt=this is a barrier token
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import jwt from "jwtwebtokens";
 const userSchema = new Schema(
   {
     username: {
@@ -52,16 +52,15 @@ const userSchema = new Schema(
 );
 // using pre hooks for encrytption , pre- its a method , middleware function are executed on after onother when each middleware calls (next.) (doing something just before the data is going to be to save .like encrypting the password )
 userSchema.pre("save", async function (next) {
-  if (!this.ismodified("password")) return next();
-  this.password = bcrypt.hash(this.password, 10);
-  next();
+  if (!this.ismodified("passwords")) return next();
+  this.passwords = await bcrypt.hash(this.passwords, 10)
+  next()
 });
-userSchema.methods,
-  (ispasswordcorrect = async function (passsword) {
-    return await bcrypt.compare(passsword, this.password);
-  });
+userSchema.methods.ispasswordcorrect = async function (passwords) {
+    return await bcrypt.compare(passwords, this.passwords)
+  }
 userSchema.methods.generateAccessToken = function () {
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
       email: this.email,
@@ -72,15 +71,12 @@ userSchema.methods.generateAccessToken = function () {
     {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
-  );
-};
+  )
+}
 userSchema.methods.generateRefreshToken = function () {
-  jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
-      email: this.email,
-      username: this.username,
-      fullname: this.fullname,
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
