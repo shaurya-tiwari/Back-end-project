@@ -1,6 +1,6 @@
-const asychandler=(requesthandler)=>{
-(req,res,next) => {
-    Promise.resolve(requesthandler(req,res,next)).catch((err)=>next(err));
+const asychandler = (requesthandler) => {
+ return (req, res, next) => {
+    Promise.resolve(requesthandler(req, res, next)).catch((err) => next(err))
+  }
 }
-}
-export {asychandler}
+export { asychandler }
