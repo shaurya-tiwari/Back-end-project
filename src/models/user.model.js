@@ -52,7 +52,7 @@ const userSchema = new Schema(
 );
 // using pre hooks for encrytption , pre- its a method , middleware function are executed on after onother when each middleware calls (next.) (doing something just before the data is going to be to save .like encrypting the password )
 userSchema.pre("save", async function (next) {
-  if (!this.ismodified("passwords")) return next();
+  if (!this.isModified("passwords")) return next();
   this.passwords = await bcrypt.hash(this.passwords, 10)
   next()
 });
