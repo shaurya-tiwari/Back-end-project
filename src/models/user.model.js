@@ -53,12 +53,12 @@ const userSchema = new Schema(
 // using pre hooks for encrytption , pre- its a method , middleware function are executed on after onother when each middleware calls (next.) (doing something just before the data is going to be to save .like encrypting the password )
 userSchema.pre("save", async function (next) {
   if (!this.isModified("passwords")) return next();
-  this.passwords = await bcrypt.hash(this.passwords, 10)
-  next()
+  this.passwords = await bcrypt.hash(this.passwords, 10);
+  next();
 });
 userSchema.methods.ispasswordcorrect = async function (passwords) {
-    return await bcrypt.compare(passwords, this.passwords)
-  }
+  return await bcrypt.compare(passwords, this.passwords);
+};
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
@@ -71,9 +71,9 @@ userSchema.methods.generateAccessToken = function () {
     {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
-  )
-}
-userSchema.methods.generateRefreshToken = function() {
+  );
+};
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -82,6 +82,6 @@ userSchema.methods.generateRefreshToken = function() {
     {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
     }
-  )
+  );
 };
 export const User = mongoose.model("User", userSchema);
