@@ -160,12 +160,12 @@ const logoutuser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshtoken: undefined,
-      },
+      $unset: {
+        refreshtoken:1
+      }
     },
     {
-      new: true,
+      new: true
     }
   );
 
@@ -286,11 +286,14 @@ const updateuserAvatar = asyncHandler(async (req, res) => {
 });
 
 const Updateusercoverimage = asyncHandler(async (req, res) => {
-  const coverimagelocalPath = req.file?.path;
+  const coverimagelocalPath = req.file?.path
+
   if (!coverimagelocalPath) {
     throw new APIerror(400, "cover image file missing");
   }
-  const coverimage = await uploadOnCloudinary(coverimagelocalPath);
+  const coverimage = await uploadOnCloudinary(coverimagelocalPath)
+
+  
   if (!coverimage.url) {
     throw new APIerror(400, "Error while uploading image");
   }
@@ -334,7 +337,7 @@ const getuserchannelprofile = asyncHandler(async (req, res) => {
 
         as: "subscribers",
       },
-      $lookup: {
+      $lookup: {  
         from: "subscriptions",
         localField: "_id",
         foreignField: "subscriber",
@@ -370,7 +373,7 @@ const getuserchannelprofile = asyncHandler(async (req, res) => {
         email: 1,
       },
     },
-    console.log(channel),
+   
   ]);
 
   if (!channel?.length) {
@@ -428,7 +431,7 @@ const getwatchhistory = asyncHandler(async (req, res) => {
   ])
   return res
   .status(200)
-  .json(new APIresponse(200, user[0], "user watch history successfully fetched!")); 
+  .json(new APIresponse(200, user[0].watchhistory, "user watch history successfully fetched!")); 
 });
 
 export {
